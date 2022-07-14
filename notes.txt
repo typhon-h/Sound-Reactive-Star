@@ -1,0 +1,14 @@
+All strips EXACTLY 30 leds on same DATA line
+Most likely no more than one full strip active at a time
+    - One plug will sufficiently power 4 strips
+
+
+Background task fading all LEDs (only active ones?) so effects only have to calculate ON and COLOR
+
+
+
+Effects:
+    - All strips react in sync as an 'audio meter'. USE GRADIENTS
+    - Light moves up from bottom and bursts out to other strip 'fireworks'
+    - Light moves back and forth along strips, mirrored on opposite side and changing direction
+    - Spiral from inside out
