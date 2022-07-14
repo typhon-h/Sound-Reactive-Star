@@ -1,12 +1,18 @@
 #include "ir.h"
 
-static bool power_on = true;
-
+/**
+ * @brief Initializes IR receiver
+ *
+ */
 void ir_setup()
 {
   IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK, USE_DEFAULT_FEEDBACK_LED_PIN);
 }
 
+/**
+ * @brief Polls IR receiver for incoming command
+ *
+ */
 void ir_poll()
 {
   if (IrReceiver.decode())
@@ -19,6 +25,11 @@ void ir_poll()
   }
 }
 
+/**
+ * @brief Processes IR command and executes mapped task
+ *
+ * @param command command to interpret
+ */
 void ir_run_command(int command)
 {
   if (!power_on && command == 0x03)

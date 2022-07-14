@@ -1,4 +1,5 @@
 #include "ir.h"
+#include "led.h"
 
 // Task Scheduler
 #include <TaskScheduler.h>
@@ -11,7 +12,13 @@ Task ir_task(IR_TASK_FREQUENCY, TASK_FOREVER, &ir_poll);
 
 void setup()
 {
+    // Set up the LED
+    led_setup();
+
+    // Set up the IR
     ir_setup();
+
+    // Set up the scheduler
     schedule.init();
     schedule.addTask(ir_task);
 
@@ -20,5 +27,5 @@ void setup()
 
 void loop()
 {
-    schedule.execute();
+    schedule.execute(); // Enable task scheduler
 }
