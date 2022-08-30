@@ -10,5 +10,5 @@ Background task fading all LEDs (only active ones?) so effects only have to calc
 Effects:
     - All strips react in sync as an 'audio meter'. USE GRADIENTS
     - Light moves up from bottom and bursts out to other strip 'fireworks'
-    - Light moves back and forth along strips, mirrored on opposite side and changing direction
+    - Light moves out and in along strips, mirrored on opposite side and changing direction
     - Spiral from inside out

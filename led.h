@@ -5,26 +5,23 @@
 #define FASTLED_INTERNAL // Removes pragma message on compile
 #include "FastLED.h"
 
-#define LED_PIN 1 // TODO: set pin
+#define LEDS_PER_STRIP 30
+#define NUM_STRIPS 4
+#define VERT_STRIP_PIN 1 // TODO: set pin
+#define RSLANT_STRIP_PIN 2
+#define HORIZ_STRIP_PIN 3
+#define LSLANT_STRIP_PIN 4
 
-#define LED_PER_STRIP 30
-#define NUM_STRIPS 8
-#define LED_COUNT LED_PER_STRIP *NUM_STRIPS
-
-#define UC_STRIP_INDEX LED_PER_STRIP * 0 // TODO: set index
-#define UR_STRIP_INDEX LED_PER_STRIP * 1
-#define CR_STRIP_INDEX LED_PER_STRIP * 2
-#define DR_STRIP_INDEX LED_PER_STRIP * 3
-#define DC_STRIP_INDEX LED_PER_STRIP * 4
-#define DL_STRIP_INDEX LED_PER_STRIP * 5
-#define CL_STRIP_INDEX LED_PER_STRIP * 6
-#define UL_STRIP_INDEX LED_PER_STRIP * 7
+#define VERT_STRIP 0
+#define RSLANT_STRIP 1
+#define HORIZ_STRIP 2
+#define LSLANT_STRIP 3
 
 #define DEFAULT_INTENSITY 255
 #define DEFAULT_SATURATION 255
 #define LED_OFF CHSV(0, 0, 0)
 
-CRGB leds[LED_COUNT];
+CRGB leds[NUM_STRIPS][LEDS_PER_STRIP];
 
 // Initialize FASTLED controller
 void led_setup(void);
