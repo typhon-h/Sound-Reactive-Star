@@ -22,6 +22,8 @@ RSLANT_STRIP = 1
 HORIZ_STRIP = 2
 LSLANT_STRIP = 3
 
+root = None
+
 
 def RGB_to_STR(color):
     return '#%02x%02x%02x' % (color[0], color[1], color[2])
@@ -63,7 +65,8 @@ def add_to_strip(row, col):
         target.append(label)
 
 
-def strip_init(root):
+def strip_init(rt):
+    root = rt
     for row in range(ROWS):
         root.rowconfigure(row, minsize=CELL_SIZE)
         root.columnconfigure(row, minsize=CELL_SIZE)
