@@ -110,5 +110,11 @@ def led_off(strip, index):
     set_led(strip, index, OFF_COLOR)
 
 
+def reset():
+    for strip in range(NUM_STRIPS):
+        for led in range(STRIP_LEN):
+            led_off(strip, led)
+
+
 def led_update(data):
     pass  # TODO: Parse C output to update strip arrays
