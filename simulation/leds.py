@@ -6,7 +6,6 @@ CELL_SIZE = 5
 PADDING = 1
 
 OFF_COLOR = (0, 0, 0)
-ON_COLOR = (128, 128, 128)
 
 LED = 0
 COLOR = 1
@@ -75,7 +74,7 @@ def strip_init(rt):
 
     for l in range(NUM_STRIPS):
         for led in range(STRIP_LEN):
-            led_off(l, led)
+            set_led(l, led, OFF_COLOR)
 
 
 def set_led(strip, index, color):
@@ -91,30 +90,23 @@ def set_led(strip, index, color):
         print("Error: Invalid Strip")
         return
 
-    if color is not None and color != OFF_COLOR:
-        strip_to_modify[index][COLOR] = color
-    elif color != OFF_COLOR and strip_to_modify[index][COLOR] == OFF_COLOR:
-        strip_to_modify[index][COLOR] = color = ON_COLOR
-    else:
-        color = strip_to_modify[index][COLOR]
-
     for led in strip_to_modify[index][LED]:
         led.config(bg=RGB_to_STR(color))
-
-
-def led_on(strip, index, color=None):
-    set_led(strip, index, color)
-
-
-def led_off(strip, index):
-    set_led(strip, index, OFF_COLOR)
 
 
 def reset():
     for strip in range(NUM_STRIPS):
         for led in range(STRIP_LEN):
-            led_off(strip, led)
+            set_led(strip, led, OFF_COLOR)
 
 
 def led_update(data):
-    pass  # TODO: Parse C output to update strip arrays
+    values = data.split(",")
+    index = 0
+    for strip in range(NUM_STRIPS):
+        for led in range(STRIP_LEN):
+            set_led(strip, led, (values[index],
+                                 values[index+1], values[index+2]))
+            index += 3
+
+    root.update()
