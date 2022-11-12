@@ -3,46 +3,47 @@ import errno
 import threading
 import serial
 import time
-import tkinter as tk
+import pygame
+from pygame.locals import *
 from leds import *
 
-RUN_SIMULATION = False
+pygame.init()
+pygame.display.set_caption("LED Simulator")
+surface = pygame.display.set_mode((795, 795))
+clock = pygame.time.Clock()
 
-root = tk.Tk()
-root.geometry("700x800")
-root.title("LED Simulator")
-START = tk.Button(root, text="✓", bg=RGB_to_STR((92, 219, 92)))
+arduino = serial.Serial(port='/dev/cu.usbmodem14201',
+                        baudrate=115200, timeout=.1)
 
 
-def simulate():
-    START.grid_forget()
-    RUN_SIMULATION = True
-    arduino = serial.Serial(port='/dev/cu.usbmodem14201',
-                            baudrate=115200, timeout=.1)
+strip_init(surface)
 
-    while RUN_SIMULATION:
+RUN_SIMULATION = True
+while RUN_SIMULATION:
+    to_update = []
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            RUN_SIMULATION = False
+
+    try:
+        data = arduino.readline()
+        if len(data) == 0:
+            print("Serial Empty")
+            continue
+        to_update += led_update(data.decode("utf-8").split(",")[:-1])
+    except serial.serialutil.SerialException:
+        print("Serial Error: Device not configured")
         try:
-            data = arduino.readline()
-            if len(data) == 0:
-                print("Serial Empty")
-                continue
-            led_update(data.decode("utf-8").split(",")[:-1])
+            time.sleep(2)
+            arduino = serial.Serial(port='/dev/cu.usbmodem14201',
+                                    baudrate=115200, timeout=.1)
+            print("Serial Reconnected: Reading Data...")
         except serial.serialutil.SerialException:
-            print("Serial Error: Device not configured")
-            try:
-                time.sleep(2)
-                arduino = serial.Serial(port='/dev/cu.usbmodem14201',
-                                        baudrate=115200, timeout=.1)
-                print("Serial Reconnected: Reading Data...")
-            except serial.serialutil.SerialException:
-                pass
-    print("Terminated")
+            pass
 
+    clock.tick(60)
+    print(f"FPS: {clock.get_fps():.2f}", end='\r')
 
-strip_init(root)
+    pygame.display.update(to_update)
 
-thread = threading.Thread(target=simulate, daemon=True)
-START.config(command=thread.start)
-START.grid(row=STRIP_LEN, column=STRIP_LEN)
-
-tk.mainloop()
+pygame.quit()

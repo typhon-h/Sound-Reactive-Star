@@ -1,12 +1,14 @@
-import tkinter as tk
+import pygame
+from pygame.locals import *
 import random
 
 STRIP_LEN = 30
 ROWS = COLS = STRIP_LEN * 2 + 1
-CELL_SIZE = 5
+CELL_SIZE = 13
 PADDING = 1
 
 OFF_COLOR = (0, 0, 0)
+BACKGROUND = (80, 80, 80)
 
 LED = 0
 COLOR = 1
@@ -22,7 +24,7 @@ RSLANT_STRIP = 1
 HORIZ_STRIP = 2
 LSLANT_STRIP = 3
 
-root = None
+surface = None
 
 
 def RGB_to_STR(color):
@@ -63,17 +65,15 @@ def add_to_strip(row, col):
             target = LSLANT[row-STRIP_LEN-1][LED]
 
     if target != None:
-        label = tk.Label(root, text="   ", font=("Times 4"))
-        label.grid(row=row, column=col, padx=PADDING, pady=PADDING)
+        label = Rect(row*CELL_SIZE, col*CELL_SIZE, CELL_SIZE, CELL_SIZE)
         target.append(label)
 
 
-def strip_init(rt):
-    global root
-    root = rt
+def strip_init(s):
+    global surface
+    surface = s
+    surface.fill(BACKGROUND)
     for row in range(ROWS):
-        root.rowconfigure(row, minsize=CELL_SIZE)
-        root.columnconfigure(row, minsize=CELL_SIZE)
         for col in range(COLS):
             add_to_strip(row, col)
 
@@ -95,9 +95,14 @@ def set_led(strip, index, color):
         print("Error: Invalid Strip")
         return
 
-    if strip_to_modify[index][LED][0].cget("bg") != RGB_to_STR(color):
+    curr_color = surface.get_at(
+        (strip_to_modify[index][LED][0].left, strip_to_modify[index][LED][0].top))
+
+    if (curr_color.r, curr_color.g, curr_color.b) != color:
         for led in strip_to_modify[index][LED]:
-            led.config(bg=RGB_to_STR(color))
+            pygame.draw.rect(surface, color, led)
+        return strip_to_modify[index][LED]
+    return False
 
 
 def reset():
@@ -107,12 +112,14 @@ def reset():
 
 
 def led_update(data):
+    updated = []
     for strip in range(NUM_STRIPS):
         for led in range(STRIP_LEN):
             index = 3 * (strip * STRIP_LEN + led)
             try:
-                set_led(strip, led, (int(data[index]),
-                                     int(data[index+1]), int(data[index+2])))
+                if pixels := set_led(strip, led, (int(data[index]),
+                                                  int(data[index+1]), int(data[index+2]))):
+                    updated += pixels
             except (IndexError, ValueError):
                 pass
-    print(random.randint(0, 100))
+    return updated
