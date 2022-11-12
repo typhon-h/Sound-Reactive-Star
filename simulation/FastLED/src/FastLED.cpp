@@ -68,11 +68,11 @@ void CFastLED::show(uint8_t scale)
 		pCur->setDither(d);
 		for (int i = 0; i < pCur->m_nLeds; i++)
 		{
-			Serial.print((pCur->m_Data)[i].r);
+			Serial.print((uint8_t)((pCur->m_Data)[i].r / 8));
 			Serial.print(',');
-			Serial.print((pCur->m_Data)[i].g);
+			Serial.print((uint8_t)((pCur->m_Data)[i].g / 8));
 			Serial.print(',');
-			Serial.print((pCur->m_Data)[i].b);
+			Serial.print((uint8_t)((pCur->m_Data)[i].b / 8));
 			Serial.print(',');
 		}
 		pCur = pCur->next();

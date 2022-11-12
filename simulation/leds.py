@@ -80,6 +80,7 @@ def strip_init(s):
     for l in range(NUM_STRIPS):
         for led in range(STRIP_LEN):
             set_led(l, led, OFF_COLOR)
+    pygame.display.flip()
 
 
 def set_led(strip, index, color):
@@ -117,8 +118,8 @@ def led_update(data):
         for led in range(STRIP_LEN):
             index = 3 * (strip * STRIP_LEN + led)
             try:
-                if pixels := set_led(strip, led, (int(data[index]),
-                                                  int(data[index+1]), int(data[index+2]))):
+                if pixels := set_led(strip, led, (int(data[index])*8,
+                                                  int(data[index+1])*8, int(data[index+2])*8)):
                     updated += pixels
             except (IndexError, ValueError):
                 pass
