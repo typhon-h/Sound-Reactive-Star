@@ -1,7 +1,6 @@
 #define FASTLED_INTERNAL
 #include "FastLED.h"
 
-
 #if defined(__SAM3X8E__)
 volatile uint32_t fuckit;
 #endif
@@ -16,12 +15,13 @@ CLEDController *CLEDController::m_pHead = NULL;
 CLEDController *CLEDController::m_pTail = NULL;
 static uint32_t lastshow = 0;
 
-uint32_t _frame_cnt=0;
-uint32_t _retry_cnt=0;
+uint32_t _frame_cnt = 0;
+uint32_t _retry_cnt = 0;
 
 // uint32_t CRGB::Squant = ((uint32_t)((__TIME__[4]-'0') * 28))<<16 | ((__TIME__[6]-'0')*50)<<8 | ((__TIME__[7]-'0')*28);
 
-CFastLED::CFastLED() {
+CFastLED::CFastLED()
+{
 	// clear out the array of led controllers
 	// m_nControllers = 0;
 	m_Scale = 255;
@@ -32,72 +32,104 @@ CFastLED::CFastLED() {
 
 CLEDController &CFastLED::addLeds(CLEDController *pLed,
 								  struct CRGB *data,
-								  int nLedsOrOffset, int nLedsIfOffset) {
+								  int nLedsOrOffset, int nLedsIfOffset)
+{
 	int nOffset = (nLedsIfOffset > 0) ? nLedsOrOffset : 0;
 	int nLeds = (nLedsIfOffset > 0) ? nLedsIfOffset : nLedsOrOffset;
 
 	pLed->init();
 	pLed->setLeds(data + nOffset, nLeds);
-	FastLED.setMaxRefreshRate(pLed->getMaxRefreshRate(),true);
+	FastLED.setMaxRefreshRate(pLed->getMaxRefreshRate(), true);
 	return *pLed;
 }
 
-void CFastLED::show(uint8_t scale) {
+void CFastLED::show(uint8_t scale)
+{
 	// guard against showing too rapidly
-	while(m_nMinMicros && ((micros()-lastshow) < m_nMinMicros));
+	while (m_nMinMicros && ((micros() - lastshow) < m_nMinMicros))
+		;
 	lastshow = micros();
 
 	// If we have a function for computing power, use it!
-	if(m_pPowerFunc) {
+	if (m_pPowerFunc)
+	{
 		scale = (*m_pPowerFunc)(scale, m_nPowerData);
 	}
 
 	CLEDController *pCur = CLEDController::head();
-	while(pCur) {
+	while (pCur)
+	{
 		uint8_t d = pCur->getDither();
-		if(m_nFPS < 100) { pCur->setDither(0); }
+		if (m_nFPS < 100)
+		{
+			pCur->setDither(0);
+		}
 		pCur->showLeds(scale);
 		pCur->setDither(d);
+		for (int i = 0; i < pCur->m_nLeds; i++)
+		{
+			Serial.print((pCur->m_Data)[i].r);
+			Serial.print(',');
+			Serial.print((pCur->m_Data)[i].g);
+			Serial.print(',');
+			Serial.print((pCur->m_Data)[i].b);
+			Serial.print(',');
+		}
 		pCur = pCur->next();
 	}
+	Serial.print('\n');
 	countFPS();
 }
 
-int CFastLED::count() {
-    int x = 0;
+int CFastLED::count()
+{
+	int x = 0;
 	CLEDController *pCur = CLEDController::head();
-	while( pCur) {
-        ++x;
+	while (pCur)
+	{
+		++x;
 		pCur = pCur->next();
 	}
-    return x;
+	return x;
 }
 
-CLEDController & CFastLED::operator[](int x) {
+CLEDController &CFastLED::operator[](int x)
+{
 	CLEDController *pCur = CLEDController::head();
-	while(x-- && pCur) {
+	while (x-- && pCur)
+	{
 		pCur = pCur->next();
 	}
-	if(pCur == NULL) {
+	if (pCur == NULL)
+	{
 		return *(CLEDController::head());
-	} else {
+	}
+	else
+	{
 		return *pCur;
 	}
 }
 
-void CFastLED::showColor(const struct CRGB & color, uint8_t scale) {
-	while(m_nMinMicros && ((micros()-lastshow) < m_nMinMicros));
+void CFastLED::showColor(const struct CRGB &color, uint8_t scale)
+{
+	while (m_nMinMicros && ((micros() - lastshow) < m_nMinMicros))
+		;
 	lastshow = micros();
 
 	// If we have a function for computing power, use it!
-	if(m_pPowerFunc) {
+	if (m_pPowerFunc)
+	{
 		scale = (*m_pPowerFunc)(scale, m_nPowerData);
 	}
 
 	CLEDController *pCur = CLEDController::head();
-	while(pCur) {
+	while (pCur)
+	{
 		uint8_t d = pCur->getDither();
-		if(m_nFPS < 100) { pCur->setDither(0); }
+		if (m_nFPS < 100)
+		{
+			pCur->setDither(0);
+		}
 		pCur->showColor(color, scale);
 		pCur->setDither(d);
 		pCur = pCur->next();
@@ -105,24 +137,30 @@ void CFastLED::showColor(const struct CRGB & color, uint8_t scale) {
 	countFPS();
 }
 
-void CFastLED::clear(bool writeData) {
-	if(writeData) {
-		showColor(CRGB(0,0,0), 0);
+void CFastLED::clear(bool writeData)
+{
+	if (writeData)
+	{
+		showColor(CRGB(0, 0, 0), 0);
 	}
-    clearData();
+	clearData();
 }
 
-void CFastLED::clearData() {
+void CFastLED::clearData()
+{
 	CLEDController *pCur = CLEDController::head();
-	while(pCur) {
+	while (pCur)
+	{
 		pCur->clearLedData();
 		pCur = pCur->next();
 	}
 }
 
-void CFastLED::delay(unsigned long ms) {
+void CFastLED::delay(unsigned long ms)
+{
 	unsigned long start = millis();
-        do {
+	do
+	{
 #ifndef FASTLED_ACCURATE_CLOCK
 		// make sure to allow at least one ms to pass to ensure the clock moves
 		// forward
@@ -130,29 +168,34 @@ void CFastLED::delay(unsigned long ms) {
 #endif
 		show();
 		yield();
-	}
-	while((millis()-start) < ms);
+	} while ((millis() - start) < ms);
 }
 
-void CFastLED::setTemperature(const struct CRGB & temp) {
+void CFastLED::setTemperature(const struct CRGB &temp)
+{
 	CLEDController *pCur = CLEDController::head();
-	while(pCur) {
+	while (pCur)
+	{
 		pCur->setTemperature(temp);
 		pCur = pCur->next();
 	}
 }
 
-void CFastLED::setCorrection(const struct CRGB & correction) {
+void CFastLED::setCorrection(const struct CRGB &correction)
+{
 	CLEDController *pCur = CLEDController::head();
-	while(pCur) {
+	while (pCur)
+	{
 		pCur->setCorrection(correction);
 		pCur = pCur->next();
 	}
 }
 
-void CFastLED::setDither(uint8_t ditherMode)  {
+void CFastLED::setDither(uint8_t ditherMode)
+{
 	CLEDController *pCur = CLEDController::head();
-	while(pCur) {
+	while (pCur)
+	{
 		pCur->setDither(ditherMode);
 		pCur = pCur->next();
 	}
@@ -169,18 +212,18 @@ void CFastLED::setDither(uint8_t ditherMode)  {
 // 	// x = (A[0]<<24)   | (A[m]<<16)   | (A[2*m]<<8) | A[3*m];
 // 	// y = (A[4*m]<<24) | (A[5*m]<<16) | (A[6*m]<<8) | A[7*m];
 //
-        // // pre-transform x
-        // t = (x ^ (x >> 7)) & 0x00AA00AA;  x = x ^ t ^ (t << 7);
-        // t = (x ^ (x >>14)) & 0x0000CCCC;  x = x ^ t ^ (t <<14);
-				//
-        // // pre-transform y
-        // t = (y ^ (y >> 7)) & 0x00AA00AA;  y = y ^ t ^ (t << 7);
-        // t = (y ^ (y >>14)) & 0x0000CCCC;  y = y ^ t ^ (t <<14);
-				//
-        // // final transform
-        // t = (x & 0xF0F0F0F0) | ((y >> 4) & 0x0F0F0F0F);
-        // y = ((x << 4) & 0xF0F0F0F0) | (y & 0x0F0F0F0F);
-        // x = t;
+// // pre-transform x
+// t = (x ^ (x >> 7)) & 0x00AA00AA;  x = x ^ t ^ (t << 7);
+// t = (x ^ (x >>14)) & 0x0000CCCC;  x = x ^ t ^ (t <<14);
+//
+// // pre-transform y
+// t = (y ^ (y >> 7)) & 0x00AA00AA;  y = y ^ t ^ (t << 7);
+// t = (y ^ (y >>14)) & 0x0000CCCC;  y = y ^ t ^ (t <<14);
+//
+// // final transform
+// t = (x & 0xF0F0F0F0) | ((y >> 4) & 0x0F0F0F0F);
+// y = ((x << 4) & 0xF0F0F0F0) | (y & 0x0F0F0F0F);
+// x = t;
 //
 // 	B[7*n] = y; y >>= 8;
 // 	B[6*n] = y; y >>= 8;
@@ -203,14 +246,17 @@ void CFastLED::setDither(uint8_t ditherMode)  {
 extern int noise_min;
 extern int noise_max;
 
-void CFastLED::countFPS(int nFrames) {
+void CFastLED::countFPS(int nFrames)
+{
 	static int br = 0;
 	static uint32_t lastframe = 0; // millis();
 
-	if(br++ >= nFrames) {
+	if (br++ >= nFrames)
+	{
 		uint32_t now = millis();
 		now -= lastframe;
-		if(now == 0) {
+		if (now == 0)
+		{
 			now = 1; // prevent division by zero below
 		}
 		m_nFPS = (br * 1000) / now;
@@ -219,55 +265,65 @@ void CFastLED::countFPS(int nFrames) {
 	}
 }
 
-void CFastLED::setMaxRefreshRate(uint16_t refresh, bool constrain) {
-	if(constrain) {
+void CFastLED::setMaxRefreshRate(uint16_t refresh, bool constrain)
+{
+	if (constrain)
+	{
 		// if we're constraining, the new value of m_nMinMicros _must_ be higher than previously (because we're only
 		// allowed to slow things down if constraining)
-		if(refresh > 0) {
+		if (refresh > 0)
+		{
 			m_nMinMicros = ((1000000 / refresh) > m_nMinMicros) ? (1000000 / refresh) : m_nMinMicros;
 		}
-	} else if(refresh > 0) {
+	}
+	else if (refresh > 0)
+	{
 		m_nMinMicros = 1000000 / refresh;
-	} else {
+	}
+	else
+	{
 		m_nMinMicros = 0;
 	}
 }
 
-extern "C" int atexit(void (* /*func*/ )()) { return 0; }
+extern "C" int atexit(void (* /*func*/)()) { return 0; }
 
 #ifdef FASTLED_NEEDS_YIELD
-extern "C" void yield(void) { }
+extern "C" void yield(void)
+{
+}
 #endif
 
 #ifdef NEED_CXX_BITS
 namespace __cxxabiv1
 {
-	#if !defined(ESP8266) && !defined(ESP32)
-	extern "C" void __cxa_pure_virtual (void) {}
-	#endif
+#if !defined(ESP8266) && !defined(ESP32)
+	extern "C" void __cxa_pure_virtual(void)
+	{
+	}
+#endif
 
 	/* guard variables */
 
 	/* The ABI requires a 64-bit type.  */
 	__extension__ typedef int __guard __attribute__((mode(__DI__)));
 
-	extern "C" int __cxa_guard_acquire (__guard *) __attribute__((weak));
-	extern "C" void __cxa_guard_release (__guard *) __attribute__((weak));
-	extern "C" void __cxa_guard_abort (__guard *) __attribute__((weak));
+	extern "C" int __cxa_guard_acquire(__guard *) __attribute__((weak));
+	extern "C" void __cxa_guard_release(__guard *) __attribute__((weak));
+	extern "C" void __cxa_guard_abort(__guard *) __attribute__((weak));
 
-	extern "C" int __cxa_guard_acquire (__guard *g)
+	extern "C" int __cxa_guard_acquire(__guard *g)
 	{
 		return !*(char *)(g);
 	}
 
-	extern "C" void __cxa_guard_release (__guard *g)
+	extern "C" void __cxa_guard_release(__guard *g)
 	{
 		*(char *)g = 1;
 	}
 
-	extern "C" void __cxa_guard_abort (__guard *)
+	extern "C" void __cxa_guard_abort(__guard *)
 	{
-
 	}
 }
 #endif

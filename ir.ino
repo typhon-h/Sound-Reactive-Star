@@ -17,7 +17,7 @@ void ir_poll()
 {
   if (IrReceiver.decode())
   {
-    if (IrReceiver.decodedIRData.protocol == 8) // NEC
+    if (IrReceiver.decodedIRData.protocol == NEC) // NEC
     {
       ir_run_command(IrReceiver.decodedIRData.command);
     }

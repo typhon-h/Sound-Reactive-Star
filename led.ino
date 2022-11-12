@@ -14,3 +14,14 @@ void led_setup()
     FastLED.clear();
     FastLED.show();
 }
+
+
+void color_cycle()
+{
+  active_hue++;
+  for(int i = 0; i < NUM_STRIPS; i++) {
+    fill_solid(leds[i], LEDS_PER_STRIP, CHSV(active_hue++, DEFAULT_SATURATION, DEFAULT_INTENSITY));
+  }
+  
+  FastLED.show();
+}

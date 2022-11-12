@@ -25,7 +25,10 @@ root = None
 
 
 def RGB_to_STR(color):
-    return '#%02x%02x%02x' % (color[0], color[1], color[2])
+    r = color[0] if color[0] < 255 else 255
+    g = color[1] if color[1] < 255 else 255
+    b = color[2] if color[2] < 255 else 255
+    return '#%02x%02x%02x' % (r, g, b)
 
 
 def add_to_strip(row, col):
@@ -65,6 +68,7 @@ def add_to_strip(row, col):
 
 
 def strip_init(rt):
+    global root
     root = rt
     for row in range(ROWS):
         root.rowconfigure(row, minsize=CELL_SIZE)
@@ -102,11 +106,14 @@ def reset():
 
 def led_update(data):
     values = data.split(",")
-    index = 0
+    values.pop()
     for strip in range(NUM_STRIPS):
         for led in range(STRIP_LEN):
-            set_led(strip, led, (values[index],
-                                 values[index+1], values[index+2]))
-            index += 3
+            index = strip * STRIP_LEN*3 + led*3
+            try:
+                set_led(strip, led, (int(values[index]),
+                                     int(values[index+1]), int(values[index+2])))
+            except (IndexError, ValueError):
+                pass
 
     root.update()

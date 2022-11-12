@@ -13,8 +13,8 @@ root.geometry("685x630")
 root.title("LED Simulator")
 START = tk.Button(root, text="✓", bg=RGB_to_STR((92, 219, 92)))
 
-# arduino = serial.Serial(port='COM4', baudrate=115200, timeout=.1)
-data = ''
+arduino = serial.Serial(port='/dev/cu.usbserial-DA00SOS8',
+                        baudrate=115200, timeout=.1)
 
 
 def simulate():
@@ -23,8 +23,7 @@ def simulate():
     RUN_SIMULATION = True
 
     while RUN_SIMULATION:
-        print("Reading Serial")
-        # data = arduino.readline()
+        data = arduino.readline().decode("utf-8").strip()
         if len(data) == 0:
             print("Serial Empty")
             continue
