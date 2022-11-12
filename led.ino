@@ -18,10 +18,28 @@ void led_setup()
 
 void color_cycle()
 {
+  // ALL RAINBOW
   active_hue++;
   for(int i = 0; i < NUM_STRIPS; i++) {
     fill_solid(leds[i], LEDS_PER_STRIP, CHSV(active_hue++, DEFAULT_SATURATION, DEFAULT_INTENSITY));
   }
   
   FastLED.show();
+
+  // SINGLE RAINBOW TRAVEL
+  // static int i = 0;
+  // static int j = 0;
+  // if(j >= LEDS_PER_STRIP) {
+  //   i++;
+  //   j = 0;
+  // }
+
+  // if(i >= NUM_STRIPS) {
+  //   i = 0;
+  // }
+
+  // leds[i][j] = CHSV(active_hue++, DEFAULT_INTENSITY, DEFAULT_SATURATION);
+  // FastLED.show();
+  // leds[i][j] = CHSV(0,0,0);
+  // j++;
 }

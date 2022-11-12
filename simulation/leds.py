@@ -62,7 +62,7 @@ def add_to_strip(row, col):
             target = LSLANT[row-STRIP_LEN-1][LED]
 
     if target != None:
-        label = tk.Label(root, text="   ", font=("Times 1"))
+        label = tk.Label(root, text="   ", font=("Times 4"))
         label.grid(row=row, column=col, padx=PADDING, pady=PADDING)
         target.append(label)
 
@@ -109,7 +109,7 @@ def led_update(data):
     values.pop()
     for strip in range(NUM_STRIPS):
         for led in range(STRIP_LEN):
-            index = strip * STRIP_LEN*3 + led*3
+            index = 3 * (strip * STRIP_LEN + led)
             try:
                 set_led(strip, led, (int(values[index]),
                                      int(values[index+1]), int(values[index+2])))
