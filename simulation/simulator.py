@@ -13,7 +13,7 @@ root.geometry("685x630")
 root.title("LED Simulator")
 START = tk.Button(root, text="✓", bg=RGB_to_STR((92, 219, 92)))
 
-arduino = serial.Serial(port='/dev/cu.usbserial-DA00SOS8',
+arduino = serial.Serial(port='/dev/cu.usbmodem14201',
                         baudrate=115200, timeout=.1)
 
 

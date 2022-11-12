@@ -15,6 +15,7 @@ Task cycle_task(CYCLE_TASK_FREQUENCY, TASK_FOREVER, &color_cycle);
 void setup()
 {
     Serial.begin(115200);
+    while(!Serial) {}
     // Set up the LED
     led_setup();
 
