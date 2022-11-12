@@ -16,18 +16,17 @@ START = tk.Button(root, text="✓", bg=RGB_to_STR((92, 219, 92)))
 
 def simulate():
     START.grid_forget()
-    root.update()
     RUN_SIMULATION = True
     arduino = serial.Serial(port='/dev/cu.usbmodem14201',
                             baudrate=115200, timeout=.1)
 
     while RUN_SIMULATION:
         try:
-            data = arduino.readline().decode("utf-8").strip()
+            data = arduino.readline()
             if len(data) == 0:
                 print("Serial Empty")
                 continue
-            led_update(data)
+            led_update(data.decode("utf-8").split(",")[:-1])
         except serial.serialutil.SerialException:
             print("Serial Error: Device not configured")
             try:

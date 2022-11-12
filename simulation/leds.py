@@ -1,4 +1,5 @@
 import tkinter as tk
+import random
 
 STRIP_LEN = 30
 ROWS = COLS = STRIP_LEN * 2 + 1
@@ -94,8 +95,9 @@ def set_led(strip, index, color):
         print("Error: Invalid Strip")
         return
 
-    for led in strip_to_modify[index][LED]:
-        led.config(bg=RGB_to_STR(color))
+    if strip_to_modify[index][LED][0].cget("bg") != RGB_to_STR(color):
+        for led in strip_to_modify[index][LED]:
+            led.config(bg=RGB_to_STR(color))
 
 
 def reset():
@@ -105,15 +107,12 @@ def reset():
 
 
 def led_update(data):
-    values = data.split(",")
-    values.pop()
     for strip in range(NUM_STRIPS):
         for led in range(STRIP_LEN):
             index = 3 * (strip * STRIP_LEN + led)
             try:
-                set_led(strip, led, (int(values[index]),
-                                     int(values[index+1]), int(values[index+2])))
+                set_led(strip, led, (int(data[index]),
+                                     int(data[index+1]), int(data[index+2])))
             except (IndexError, ValueError):
                 pass
-
-    root.update()
+    print(random.randint(0, 100))

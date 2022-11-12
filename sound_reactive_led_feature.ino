@@ -8,7 +8,7 @@ Scheduler schedule;
 
 // Initialize tasks
 #define IR_TASK_FREQUENCY 400
-#define CYCLE_TASK_FREQUENCY 250
+#define CYCLE_TASK_FREQUENCY 50
 Task ir_task(IR_TASK_FREQUENCY, TASK_FOREVER, &ir_poll);
 Task cycle_task(CYCLE_TASK_FREQUENCY, TASK_FOREVER, &color_cycle);
 
