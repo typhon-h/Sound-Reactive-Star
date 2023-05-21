@@ -1,18 +1,18 @@
-import os
-import errno
-import threading
 import serial
+import sys
 import time
 import pygame
 from pygame.locals import *
 from leds import *
+
+port = sys.argv[1]
 
 pygame.init()
 pygame.display.set_caption("LED Simulator")
 surface = pygame.display.set_mode((795, 795))
 clock = pygame.time.Clock()
 
-arduino = serial.Serial(port='/dev/cu.usbmodem14201',
+arduino = serial.Serial(port=port,
                         baudrate=115200, timeout=.1)
 
 
@@ -35,7 +35,7 @@ while RUN_SIMULATION:
         print("Serial Error: Device not configured")
         try:
             time.sleep(2)
-            arduino = serial.Serial(port='/dev/cu.usbmodem14201',
+            arduino = serial.Serial(port=port,
                                     baudrate=115200, timeout=.1)
             print("Serial Reconnected: Reading Data...")
         except serial.serialutil.SerialException:
