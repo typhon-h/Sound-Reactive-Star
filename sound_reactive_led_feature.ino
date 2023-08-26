@@ -10,8 +10,8 @@ Scheduler schedule;
 
 // Initialize tasks
 #define IR_TASK_FREQUENCY 50
-#define CYCLE_TASK_FREQUENCY 30
-#define MICROPHONE_TASK_FREQUENCY 50
+#define CYCLE_TASK_FREQUENCY 5
+#define MICROPHONE_TASK_FREQUENCY 1000
 Task ir_task(IR_TASK_FREQUENCY, TASK_FOREVER, &ir_poll);
 Task cycle_task(CYCLE_TASK_FREQUENCY, TASK_FOREVER, &color_cycle);
 Task microphone_task(MICROPHONE_TASK_FREQUENCY, TASK_FOREVER, &microphone_sample);
@@ -38,6 +38,7 @@ void setup()
     schedule.addTask(microphone_task);
 
     cycle_task.enable();
+    microphone_task.enable();
 }
 
 void loop()

@@ -5,6 +5,9 @@
 #define FHT_N 128 // 128 samples
 
 #include <FHT.h> // FFT-like library
+
+extern CircBuf_t g_micSampleBuffer;
+
 void microphone_setup(void);
 void microphone_sample(void);
 
