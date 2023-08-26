@@ -13,9 +13,9 @@ int16_t *initCircBuf(circBuf_t *buff, int16_t size)
 	return buff->data;
 }
 
-void writeCircBuf(circBuf_t *buff, int16_t entry)
+void writeCircBuf(circBuf_t *buff, int16_t value)
 {
-	buff->data[buff->windex++] = entry;
+	buff->data[buff->windex++] = value;
 
 	if (buff->windex >= buff->size)
 		buff->windex = 0;
