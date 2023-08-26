@@ -3,17 +3,17 @@
 
 #include "circularBuffer.h"
 
-uint16_t *initCircBuf(circBuf_t *buff, uint16_t size)
+int16_t *initCircBuf(circBuf_t *buff, int16_t size)
 {
 	buff->size = size;
 	buff->windex = 0;
 	buff->rindex = 0;
 	buff->data =
-		(uint16_t *)calloc(size, sizeof(uint16_t));
+		(int16_t *)calloc(size, sizeof(int16_t));
 	return buff->data;
 }
 
-void writeCircBuf(circBuf_t *buff, uint16_t entry)
+void writeCircBuf(circBuf_t *buff, int16_t entry)
 {
 	buff->data[buff->windex++] = entry;
 
@@ -21,9 +21,9 @@ void writeCircBuf(circBuf_t *buff, uint16_t entry)
 		buff->windex = 0;
 }
 
-uint16_t readCircBuf(circBuf_t *buff)
+int16_t readCircBuf(circBuf_t *buff)
 {
-	uint16_t val = buff->data[buff->rindex++];
+	int16_t val = buff->data[buff->rindex++];
 
 	if (buff->rindex >= buff->size)
 		buff->rindex = 0;

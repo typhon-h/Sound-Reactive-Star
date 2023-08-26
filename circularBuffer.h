@@ -1,22 +1,22 @@
-#ifndef CIRCBUF_H_
-#define CIRCBUF_H_
+#ifndef CIRCBUF_H
+#define CIRCBUF_H
 
 #include <stdint.h>
 
 typedef struct
 {
-	uint16_t size;
-	uint16_t windex;
-	uint16_t rindex;
-	uint16_t *data;
+	int16_t size;
+	int16_t windex;
+	int16_t rindex;
+	int16_t *data;
 } circBuf_t;
 
-uint16_t *initCircBuf(circBuf_t *buff, uint16_t size);
+int16_t *initCircBuf(circBuf_t *buff, int16_t size);
 
-void writeCircBuf(circBuf_t *buff, uint16_t value);
+void writeCircBuf(circBuf_t *buff, int16_t value);
 
-uint16_t readCircBuf(circBuf_t *buff);
+int16_t readCircBuf(circBuf_t *buff);
 
 void freeCircBuf(circBuf_t *buff);
 
-#endif /*CIRCBUF_H_*/
+#endif // CIRCBUF_H
