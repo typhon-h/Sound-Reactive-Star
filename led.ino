@@ -1,3 +1,7 @@
+#include "microphone.h"
+#include <FHT.h> // FFT-like library
+#include "led.h"
+
 /**
  * @brief Initializes the strips within FastLED with default settings.
  *
@@ -15,31 +19,60 @@ void led_setup()
     FastLED.show();
 }
 
-
 void color_cycle()
 {
-  // ALL RAINBOW
-  // active_hue++;
-  // for(int i = 0; i < NUM_STRIPS; i++) {
-  //   fill_solid(leds[i], LEDS_PER_STRIP, CHSV(active_hue++, DEFAULT_SATURATION, DEFAULT_INTENSITY));
-  // }
-  
-  // FastLED.show();
 
-  // SINGLE RAINBOW TRAVEL
-  static int i = 0;
-  static int j = 0;
-  if(j >= LEDS_PER_STRIP) {
-    i++;
-    j = 0;
-  }
+    int strip_height[4] = {0, 0, 0, 0};
 
-  if(i >= NUM_STRIPS) {
-    i = 0;
-  }
+    for (int i = 2; i < FHT_N / 2; i++)
+    {
+        // clear out anything that isn't better than 32
+        if (fht_log_out[i] < 32)
+        {
+            fht_log_out[i] = 0;
+        }
+        else
+        {
+            fht_log_out[i] -= 32; // reduce by 32 just to get a clearer image
+        }
 
-  leds[i][j] = CHSV(active_hue++, DEFAULT_INTENSITY, DEFAULT_SATURATION);
-  FastLED.show();
-  leds[i][j] = CHSV(0,0,0);
-  j++;
+        fht_log_out[i] *= 2; // double the strength of it (*2)
+
+        Serial.print(fht_log_out[i]);
+        Serial.print(',');
+
+        if (i < FHT_N / 2 * 1 / 4)
+            strip_height[0] += fht_log_out[i];
+        if (i < FHT_N / 2 * 2 / 4)
+            strip_height[1] += fht_log_out[i];
+        if (i < FHT_N / 2 * 3 / 4)
+            strip_height[2] += fht_log_out[i];
+        if (i < FHT_N / 2 * 4 / 4)
+            strip_height[3] += fht_log_out[i];
+    }
+    Serial.print("\n");
+
+    // for the below specific frequency bins, we'll put a value in one of the
+    // row displays. this is to represent the value at that particular
+    // height.
+
+    // for each pixel, figure out row, and if it should be coloured or not.
+
+    for (int k = 0; k < 4; k++)
+    {
+        byte val = map(strip_height[k], 0, 255, 0, LEDS_PER_STRIP);
+        byte hue = 10;
+
+        for (int i = 0; i <= val; i++)
+        {
+            leds[k][i] = CHSV(hue += 10, DEFAULT_SATURATION, DEFAULT_INTENSITY);
+        }
+
+        for (int i = val + 1; i <= LEDS_PER_STRIP; i++)
+        {
+            leds[k][i].nscale8(10);
+        }
+    }
+
+    FastLED.show();
 }
