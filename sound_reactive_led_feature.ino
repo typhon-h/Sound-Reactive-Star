@@ -1,3 +1,5 @@
+#include "circularBuffer.h"
+#include "microphone.h"
 #include "ir.h"
 #include "led.h"
 
@@ -7,10 +9,12 @@
 Scheduler schedule;
 
 // Initialize tasks
-#define IR_TASK_FREQUENCY 400
-#define CYCLE_TASK_FREQUENCY 16
+#define IR_TASK_FREQUENCY 50
+#define CYCLE_TASK_FREQUENCY 30
+#define MICROPHONE_TASK_FREQUENCY 50
 Task ir_task(IR_TASK_FREQUENCY, TASK_FOREVER, &ir_poll);
 Task cycle_task(CYCLE_TASK_FREQUENCY, TASK_FOREVER, &color_cycle);
+Task microphone_task(MICROPHONE_TASK_FREQUENCY, TASK_FOREVER, &microphone_sample);
 
 void setup()
 {
@@ -24,12 +28,15 @@ void setup()
     // Set up the IR
     ir_setup();
 
+    // Set up the microphone
+    microphone_setup();
+
     // Set up the scheduler
     schedule.init();
-    schedule.addTask(ir_task);
+    // schedule.addTask(ir_task); TODO: Temp disabled to reduce processor load
     schedule.addTask(cycle_task);
+    schedule.addTask(microphone_task);
 
-    ir_task.enable();
     cycle_task.enable();
 }
 
