@@ -26,5 +26,5 @@ CRGB leds[NUM_STRIPS][LEDS_PER_STRIP];
 // Initialize FASTLED controller
 void led_setup(void);
 static uint8_t active_hue = 0;
-void color_cycle(void);
+void pulse_effect(void);
 #endif

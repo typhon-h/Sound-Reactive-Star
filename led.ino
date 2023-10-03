@@ -19,68 +19,54 @@ void led_setup()
     FastLED.show();
 }
 
-void color_cycle()
+void pulse_effect() /// led update
 {
+    static int maxSensitivity = 255;
+    static int minSensitivity = 0;
 
-    int strips[4] = {0, 0, 0, 0};
+    int stripFrequencies[4] = {0, 0, 0, 0};
 
-    for (int i = 0; i < FHT_N; i++)
-    {
-        int k = analogRead(A0);
-
-        fht_input[i] = k; // fill out array
-    }
-
-    fht_window();  // window the data for better frequency response
-    fht_reorder(); // reorder the data before doing the fht
-    fht_run();     // process the data in the fht
-    fht_mag_log(); // take the output of the fht
-
-    // 8 bins to break up the frequencies - map them to 4 strips
     for (int i = 2; i < FHT_N / 2; i++)
     {
-        if (i < FHT_N / 2 * 1 / 8)
-            strips[0] += fht_log_out[i];
-        if (i < FHT_N / 2 * 3 / 8)
-            strips[1] += fht_log_out[i];
-        if (i < FHT_N / 2 * 5 / 8)
-            strips[2] += fht_log_out[i];
-        if (i < FHT_N / 2 * 7 / 8)
-            strips[3] += fht_log_out[i];
+        if (i < FHT_N / 2 * 1 / 4)
+            stripFrequencies[0] += fht_log_out[i];
+        else if (i < FHT_N / 2 * 2 / 4)
+            stripFrequencies[1] += fht_log_out[i];
+        else if (i < FHT_N / 2 * 3 / 4)
+            stripFrequencies[2] += fht_log_out[i];
+        else if (i < FHT_N / 2 * 4 / 4)
+            stripFrequencies[3] += fht_log_out[i];
     }
 
-    Serial.print(strips[0]);
-    Serial.print(" ");
-    Serial.print(strips[1]);
-    Serial.print(" ");
-    Serial.print(strips[2]);
-    Serial.print(" ");
-    Serial.println(strips[3]);
+    // Debug log for strip frequencies
+    // Serial.print(strips[0]);
+    // Serial.print(" ");
+    // Serial.print(strips[1]);
+    // Serial.print(" ");
+    // Serial.print(strips[2]);
+    // Serial.print(" ");
+    // Serial.println(strips[3]);
 
-    // -------------------------------
-    // Turn on LEDS
+    for (int k = 0; k < 4; k++)
+    {
+        if (stripFrequencies[k] > maxSensitivity)
+            stripFrequencies[k] = maxSensitivity;
+        if (stripFrequencies[k] < minSensitivity)
+            stripFrequencies[k] = minSensitivity;
 
-    // for the below specific frequency bins, we'll put a value in one of the
-    // row displays. this is to represent the value at that particular
-    // height.
+        byte val = map(stripFrequencies[k], minSensitivity, maxSensitivity, 0, LEDS_PER_STRIP);
+        byte hue = 10;
 
-    // for each pixel, figure out row, and if it should be coloured or not.
+        for (int i = 0; i < val; i++)
+        {
+            leds[k][i] = CHSV(hue += 10, DEFAULT_SATURATION, DEFAULT_INTENSITY);
+        }
 
-    // for (int k = 0; k < 4; k++)
-    // {
-    //     byte val = map(strip_height[k], 0, 255, 0, LEDS_PER_STRIP);
-    //     byte hue = 10;
+        for (int i = val - 1; i <= LEDS_PER_STRIP; i++)
+        {
+            leds[k][i] = CRGB::Black;
+        }
+    }
 
-    //     for (int i = 0; i <= val; i++)
-    //     {
-    //         leds[k][i] = CHSV(hue += 10, DEFAULT_SATURATION, DEFAULT_INTENSITY);
-    //     }
-
-    //     for (int i = val + 1; i <= LEDS_PER_STRIP; i++)
-    //     {
-    //         leds[k][i].nscale8(10);
-    //     }
-    // }
-
-    FastLED.show();
+    FastLED.show(); // turn on and off for lights
 }

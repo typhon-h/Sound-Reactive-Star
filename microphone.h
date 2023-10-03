@@ -9,4 +9,6 @@
 void microphone_setup(void);
 void microphone_sample(void);
 
+#define MICROPHONE_PIN A0
+
 #endif // MIC_H
