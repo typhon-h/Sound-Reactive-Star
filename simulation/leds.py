@@ -19,9 +19,9 @@ RSLANT = [[[], OFF_COLOR] for led in range(STRIP_LEN)]
 HORIZ = [[[], OFF_COLOR] for led in range(STRIP_LEN)]
 LSLANT = [[[], OFF_COLOR] for led in range(STRIP_LEN)]
 
-VERT_STRIP = 0
+VERT_STRIP = 2
 RSLANT_STRIP = 1
-HORIZ_STRIP = 2
+HORIZ_STRIP = 0
 LSLANT_STRIP = 3
 
 surface = None
