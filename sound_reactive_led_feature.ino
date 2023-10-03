@@ -1,4 +1,3 @@
-#include "circularBuffer.h"
 #include "microphone.h"
 #include "ir.h"
 #include "led.h"
@@ -38,7 +37,7 @@ void setup()
     schedule.addTask(microphone_task);
 
     cycle_task.enable();
-    microphone_task.enable();
+    // microphone_task.enable(); TODO: Temp disabled as unused
 }
 
 void loop()
