@@ -124,3 +124,11 @@ def led_update(data):
             except (IndexError, ValueError):
                 pass
     return updated
+
+def power_consumption(led_values):
+    MAX_MA_PER_DIODE = 20
+    MIN_MA_PER_DIODE = 0
+    MIN_LEVEL_PER_CHANNEL = 0
+    MAX_LEVEL_PER_CHANNEL = 255
+    # Map value sum of values mapped from 0-255 to 0-20
+    return sum([(((level - MIN_LEVEL_PER_CHANNEL) / (MAX_LEVEL_PER_CHANNEL - MIN_LEVEL_PER_CHANNEL)) * (MAX_MA_PER_DIODE - MIN_MA_PER_DIODE) + MIN_MA_PER_DIODE) for level in led_values])

@@ -30,7 +30,8 @@ while RUN_SIMULATION:
         if len(data) == 0:
             print("Serial Empty")
             continue
-        to_update += led_update(data.decode("utf-8").split(",")[:-1])
+        led_values = data.decode("utf-8").split(",")[:-1]
+        to_update += led_update(led_values)
     except serial.serialutil.SerialException:
         print("Serial Error: Device not configured")
         try:
@@ -42,7 +43,7 @@ while RUN_SIMULATION:
             pass
 
     clock.tick(60)
-    print(f"FPS: {clock.get_fps():.2f}", end='\r')
+    print(f"FPS: {clock.get_fps():.2f} | Est. Power: ~{power_consumption(led_values):.2f} / 3000 mA", end='\r')
 
     pygame.display.update(to_update)
 
