@@ -22,35 +22,43 @@ void led_setup()
 void color_cycle()
 {
 
-    int strip_height[4] = {0, 0, 0, 0};
+    int strips[4] = {0, 0, 0, 0};
 
+    for (int i = 0; i < FHT_N; i++)
+    {
+        int k = analogRead(A0);
+
+        fht_input[i] = k; // fill out array
+    }
+
+    fht_window();  // window the data for better frequency response
+    fht_reorder(); // reorder the data before doing the fht
+    fht_run();     // process the data in the fht
+    fht_mag_log(); // take the output of the fht
+
+    // 8 bins to break up the frequencies - map them to 4 strips
     for (int i = 2; i < FHT_N / 2; i++)
     {
-        // clear out anything that isn't better than 32
-        if (fht_log_out[i] < 32)
-        {
-            fht_log_out[i] = 0;
-        }
-        else
-        {
-            fht_log_out[i] -= 32; // reduce by 32 just to get a clearer image
-        }
-
-        fht_log_out[i] *= 2; // double the strength of it (*2)
-
-        Serial.print(fht_log_out[i]);
-        Serial.print(',');
-
-        if (i < FHT_N / 2 * 1 / 4)
-            strip_height[0] += fht_log_out[i];
-        if (i < FHT_N / 2 * 2 / 4)
-            strip_height[1] += fht_log_out[i];
-        if (i < FHT_N / 2 * 3 / 4)
-            strip_height[2] += fht_log_out[i];
-        if (i < FHT_N / 2 * 4 / 4)
-            strip_height[3] += fht_log_out[i];
+        if (i < FHT_N / 2 * 1 / 8)
+            strips[0] += fht_log_out[i];
+        if (i < FHT_N / 2 * 3 / 8)
+            strips[1] += fht_log_out[i];
+        if (i < FHT_N / 2 * 5 / 8)
+            strips[2] += fht_log_out[i];
+        if (i < FHT_N / 2 * 7 / 8)
+            strips[3] += fht_log_out[i];
     }
-    Serial.print("\n");
+
+    Serial.print(strips[0]);
+    Serial.print(" ");
+    Serial.print(strips[1]);
+    Serial.print(" ");
+    Serial.print(strips[2]);
+    Serial.print(" ");
+    Serial.println(strips[3]);
+
+    // -------------------------------
+    // Turn on LEDS
 
     // for the below specific frequency bins, we'll put a value in one of the
     // row displays. this is to represent the value at that particular
@@ -58,21 +66,21 @@ void color_cycle()
 
     // for each pixel, figure out row, and if it should be coloured or not.
 
-    for (int k = 0; k < 4; k++)
-    {
-        byte val = map(strip_height[k], 0, 255, 0, LEDS_PER_STRIP);
-        byte hue = 10;
+    // for (int k = 0; k < 4; k++)
+    // {
+    //     byte val = map(strip_height[k], 0, 255, 0, LEDS_PER_STRIP);
+    //     byte hue = 10;
 
-        for (int i = 0; i <= val; i++)
-        {
-            leds[k][i] = CHSV(hue += 10, DEFAULT_SATURATION, DEFAULT_INTENSITY);
-        }
+    //     for (int i = 0; i <= val; i++)
+    //     {
+    //         leds[k][i] = CHSV(hue += 10, DEFAULT_SATURATION, DEFAULT_INTENSITY);
+    //     }
 
-        for (int i = val + 1; i <= LEDS_PER_STRIP; i++)
-        {
-            leds[k][i].nscale8(10);
-        }
-    }
+    //     for (int i = val + 1; i <= LEDS_PER_STRIP; i++)
+    //     {
+    //         leds[k][i].nscale8(10);
+    //     }
+    // }
 
     FastLED.show();
 }
