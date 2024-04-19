@@ -118,8 +118,8 @@ def led_update(data):
         for led in range(STRIP_LEN):
             index = 3 * (strip * STRIP_LEN + led)
             try:
-                if pixels := set_led(strip, led, (int(data[index])*8,
-                                                  int(data[index+1])*8, int(data[index+2])*8)):
+                if pixels := set_led(strip, led, (int(data[index]),
+                                                  int(data[index+1]), int(data[index+2]))):
                     updated += pixels
             except (IndexError, ValueError):
                 pass
@@ -131,4 +131,4 @@ def power_consumption(led_values):
     MIN_LEVEL_PER_CHANNEL = 0
     MAX_LEVEL_PER_CHANNEL = 255
     # Map value sum of values mapped from 0-255 to 0-20
-    return sum([(((level - MIN_LEVEL_PER_CHANNEL) / (MAX_LEVEL_PER_CHANNEL - MIN_LEVEL_PER_CHANNEL)) * (MAX_MA_PER_DIODE - MIN_MA_PER_DIODE) + MIN_MA_PER_DIODE) for level in led_values])
+    return sum([(((int(level) - MIN_LEVEL_PER_CHANNEL) / (MAX_LEVEL_PER_CHANNEL - MIN_LEVEL_PER_CHANNEL)) * (MAX_MA_PER_DIODE - MIN_MA_PER_DIODE) + MIN_MA_PER_DIODE) for level in led_values])

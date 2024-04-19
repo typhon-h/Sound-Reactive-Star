@@ -1,3 +1,8 @@
+/** @file microphone.ino
+ * @author Leonardo Bolstad
+ * @date 04 Oct 2023
+ * @brief code regarding microphone
+ */
 #include "microphone.h"
 #include <FHT.h> // FFT-like library
 #include <avr/io.h>
@@ -14,7 +19,7 @@ void microphone_sample()
     for (int i = 0; i < FHT_N; i++)
     {
         int k = analogRead(MICROPHONE_PIN);
-
+        // Serial.println(k);
         fht_input[i] = k; // fill out array
     }
 

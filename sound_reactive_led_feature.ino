@@ -1,46 +1,46 @@
-#include "microphone.h"
-#include "ir.h"
-#include "led.h"
+/** @file Interactive-lights.ino
+* @author Leonardo Bolstad
+* @date 04 Oct 2023
+* @brief Main File
+*/
+// Include necessary header files
+#include "microphone.h"  // Microphone-related functions and variables
+#include "ir.h"          // Infrared (IR) module functions and variables
+#include "led.h"         // LED-related functions and variables
+#include "tasks.h"       // Task-related functions and variables
 
 // Task Scheduler
 #include <TaskScheduler.h>
 #include <TaskSchedulerDeclarations.h>
 Scheduler schedule;
 
-// Initialize tasks
-#define IR_TASK_FREQUENCY 20
-#define CYCLE_TASK_FREQUENCY 50
-#define MICROPHONE_TASK_FREQUENCY 100
-Task ir_task(IR_TASK_FREQUENCY, TASK_FOREVER, &ir_poll);
-Task led_task(CYCLE_TASK_FREQUENCY, TASK_FOREVER, &pulse_effect);
-Task microphone_task(MICROPHONE_TASK_FREQUENCY, TASK_FOREVER, &microphone_sample);
+void setup() {
+  delay(3000);
+  Serial.begin(19200);  // Initialize serial communication
 
-void setup()
-{
-    Serial.begin(115200);
-    while (!Serial)
-    {
-    }
-    // Set up the LED
-    led_setup();
+  // Set up the LED
+  led_setup();
 
-    // Set up the IR
-    ir_setup();
+  // Set up the IR
+  ir_setup();
 
-    // Set up the microphone
-    microphone_setup();
+  // Set up the microphone
+  microphone_setup();
 
-    // Set up the scheduler
-    schedule.init();
-    // schedule.addTask(ir_task); TODO: Temp disabled to reduce processor load
-    schedule.addTask(led_task);
-    schedule.addTask(microphone_task);
+  // Set up the scheduler
+  schedule.init();
+  //  schedule.addTask(ir_task);
+  schedule.addTask(led_task);
+  schedule.addTask(microphone_task);
+  //  schedule.addTask(rotate_task);
 
-    led_task.enable();
-    microphone_task.enable();
+  // rotate_task.enable(); // rotate and enable are now set through ir_task.enable()
+  led_task.enable();
+  microphone_task.enable();
+
+  //  ir_task.enable();
 }
 
-void loop()
-{
-    schedule.execute(); // Enable task scheduler
+void loop() {
+  schedule.execute();  // Enable task scheduler
 }

@@ -31,6 +31,7 @@ while RUN_SIMULATION:
             print("Serial Empty")
             continue
         led_values = data.decode("utf-8").split(",")[:-1]
+        print(led_values)
         to_update += led_update(led_values)
     except serial.serialutil.SerialException:
         print("Serial Error: Device not configured")

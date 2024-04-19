@@ -1,3 +1,8 @@
+/** @file microphone.h
+ * @author Leonardo Bolstad
+ * @date 04 Oct 2023
+ * @brief variables regarding microphone
+ */
 #ifndef MIC_H
 #define MIC_H
 
