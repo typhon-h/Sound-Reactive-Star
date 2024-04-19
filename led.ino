@@ -29,62 +29,61 @@ void led_setup()
     FastLED.show();
 }
 
-void rotate_led() // rotate function
+void avg_freq_band_values(int *strips)
 {
-    CRGB temp[LEDS_PER_STRIP];
-    for (int strip = NUM_STRIPS - 1; strip > 0; --strip)
+    for (int i = NOISE_INDEX + 1; i <= LOW_INDEX; i++)
     {
-        memcpy(temp, leds[strip], LEDS_PER_STRIP * sizeof(CRGB));
-        memcpy(leds[strip], leds[strip - 1], LEDS_PER_STRIP * sizeof(CRGB));
-        memcpy(leds[strip - 1], temp, LEDS_PER_STRIP * sizeof(CRGB));
+        strips[0] += fht_log_out[i] / (LOW_INDEX - NOISE_INDEX);
     }
-    // Increment rotate offset
-    rotate_offset++;
 
-    Serial.println("Rotate");
-    led_off();
+    for (int i = LOW_INDEX + 1; i <= LOW_MID_INDEX; i++)
+    {
+        strips[1] += fht_log_out[i] / (LOW_MID_INDEX - LOW_INDEX);
+    }
+
+    for (int i = LOW_MID_INDEX + 1; i <= HIGH_MID_INDEX; i++)
+    {
+        strips[2] += fht_log_out[i] / (HIGH_MID_INDEX - LOW_MID_INDEX);
+    }
+
+    for (int i = HIGH_MID_INDEX + 1; i <= HIGH_INDEX; i++)
+    {
+        strips[3] += fht_log_out[i] / (HIGH_INDEX - HIGH_MID_INDEX);
+    }
+
+    return strips;
 }
 
 void pulse_effect() /// led update
 {
-
     int strips[4] = {0, 0, 0, 0};
-
-    // Split frequencies into sum per strip
-    for (int i = 2; i < FHT_N / 2; i++)
-    {
-        if (i < FHT_N / 2 * 1 / 4)
-            strips[0] += fht_log_out[i];
-        else if (i < FHT_N / 2 * 2 / 4)
-            strips[1] += fht_log_out[i];
-        else if (i < FHT_N / 2 * 3 / 4)
-            strips[2] += fht_log_out[i];
-        else if (i < FHT_N / 2 * 4 / 4)
-            strips[3] += fht_log_out[i];
-    }
+    avg_freq_band_values(strips);
+    // for (int i = 0; i < 4; i++)
+    // {
+    //     Serial.print(strips[i]);
+    //     Serial.print(",");
+    // }
+    // Serial.println();
 
     // -------------------------------
     // Turn on LEDS
     // max and min decide the range that the mic's range, based on the input it makes a
-    // percentage / max and then outputs a percentage / 30 which decides how many lights are on 
+    // percentage / max and then outputs a percentage / 30 which decides how many lights are on
     int boundaries[4][2] = {
-        {0, 500},
-        {0, 400},
-        {0, 400},
-        {0, 400},
+        {19, 90},
+        {10, 90},
+        {5, 90},
+        {2, 90},
     };
-    int strips_on = (rotate_task.isEnabled()) ? 1 : NUM_STRIPS; // Ternary if rotate on 1 if not 4 
-    for (int j = 0; j < strips_on; j++) // change NUM_STRIPS to 1 for rotate
+
+    for (int k = 0; k < NUM_STRIPS; k++)
     {
-        int k = (j + rotate_offset) % NUM_STRIPS;
-        // int k = j;
+        if (strips[k] > boundaries[k][1])
+            strips[k] = boundaries[k][1];
+        if (strips[k] < boundaries[k][0])
+            strips[k] = boundaries[k][0];
 
-        if (strips[k] > boundaries[j][1])
-            strips[k] = boundaries[j][1];
-        if (strips[k] < boundaries[j][0])
-            strips[k] = boundaries[j][0];
-
-        byte val = map(strips[k], boundaries[j][0], boundaries[j][1], 0, LEDS_PER_STRIP);
+        byte val = map(strips[k], boundaries[k][0], boundaries[k][1], 0, LEDS_PER_STRIP);
         // upper boynd of the value's target range
         byte hue;
 
