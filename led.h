@@ -28,7 +28,6 @@
 #define LED_OFF CHSV(0, 0, 0)
 
 CRGB leds[NUM_STRIPS][LEDS_PER_STRIP];
-int rotate_offset = 0;
 bool step_hue = true;
 int current_hue = 10;
 int shuffle = false;
@@ -37,6 +36,5 @@ int shuffle = false;
 void led_setup(void);
 static uint8_t active_hue = 0;
 void pulse_effect(void);
-void rotate_led(void);
 void led_off(void);
 #endif

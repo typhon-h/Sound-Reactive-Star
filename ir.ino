@@ -55,16 +55,13 @@ void ir_run_command(int command)
   switch (command)
   {
   case 0x00:
-    rotate_task.disable();
     break;
 
   case 0x01:
-    rotate_task.enable();
     break;
 
   case 0x02: // Power
     power_on = false;
-    rotate_task.disable();
     led_task.disable();
     microphone_task.disable();
     led_off();

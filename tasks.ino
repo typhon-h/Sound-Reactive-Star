@@ -16,10 +16,8 @@
 // frequency to period so all values below are in times / sec
 #define IR_TASK_FREQUENCY 50
 #define LED_TASK_FREQUENCY 20
-#define MICROPHONE_TASK_FREQUENCY 50
-#define ROTATE_TASK_FREQUENCY 1
+#define MICROPHONE_TASK_FREQUENCY 30
 
 Task ir_task(FREQ_TO_PERIOD(IR_TASK_FREQUENCY), TASK_FOREVER, &ir_poll);
 Task led_task(FREQ_TO_PERIOD(LED_TASK_FREQUENCY), TASK_FOREVER, &pulse_effect);
 Task microphone_task(FREQ_TO_PERIOD(MICROPHONE_TASK_FREQUENCY), TASK_FOREVER, &microphone_sample);
-Task rotate_task(FREQ_TO_PERIOD(ROTATE_TASK_FREQUENCY), TASK_FOREVER, &rotate_led);

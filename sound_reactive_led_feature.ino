@@ -1,28 +1,28 @@
 /** @file Interactive-lights.ino
-* @author Leonardo Bolstad
-* @date 04 Oct 2023
-* @brief Main File
-*/
+ * @author Leonardo Bolstad
+ * @date 04 Oct 2023
+ * @brief Main File
+ */
 // Include necessary header files
-#include "microphone.h"  // Microphone-related functions and variables
-#include "ir.h"          // Infrared (IR) module functions and variables
-#include "led.h"         // LED-related functions and variables
-#include "tasks.h"       // Task-related functions and variables
+#include "microphone.h" // Microphone-related functions and variables
+#include "ir.h"         // Infrared (IR) module functions and variables
+#include "led.h"        // LED-related functions and variables
+#include "tasks.h"      // Task-related functions and variables
 
 // Task Scheduler
 #include <TaskScheduler.h>
 #include <TaskSchedulerDeclarations.h>
 Scheduler schedule;
 
-void setup() {
+void setup()
+{
   delay(3000);
-  Serial.begin(19200);  // Initialize serial communication
-
-  // Set up the LED
+  Serial.begin(115200); // Initialize serial communication
+  // // Set up the LED
   led_setup();
 
-  // Set up the IR
-  ir_setup();
+  // // Set up the IR
+  // ir_setup();
 
   // Set up the microphone
   microphone_setup();
@@ -32,15 +32,14 @@ void setup() {
   //  schedule.addTask(ir_task);
   schedule.addTask(led_task);
   schedule.addTask(microphone_task);
-  //  schedule.addTask(rotate_task);
 
-  // rotate_task.enable(); // rotate and enable are now set through ir_task.enable()
   led_task.enable();
   microphone_task.enable();
 
   //  ir_task.enable();
 }
 
-void loop() {
-  schedule.execute();  // Enable task scheduler
+void loop()
+{
+  schedule.execute(); // Enable task scheduler
 }
