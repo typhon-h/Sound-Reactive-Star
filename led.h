@@ -28,13 +28,11 @@
 #define LED_OFF CHSV(0, 0, 0)
 
 CRGB leds[NUM_STRIPS][LEDS_PER_STRIP];
-bool step_hue = true;
-int current_hue = 10;
-int shuffle = false;
+
+static uint8_t int current_hue = 10;
 
 // Initialize FASTLED controller
 void led_setup(void);
-static uint8_t active_hue = 0;
 void pulse_effect(void);
 void led_off(void);
 #endif
