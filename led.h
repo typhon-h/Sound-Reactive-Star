@@ -11,6 +11,12 @@
 #include "FastLED.h"
 #include <stdbool.h>
 
+typedef enum
+{
+    PULSE,
+    NUM_EFFECTS
+} EFFECT_T;
+
 #define LEDS_PER_STRIP 30
 #define NUM_STRIPS 4
 #define VERT_STRIP_PIN 9
@@ -29,10 +35,12 @@
 
 CRGB leds[NUM_STRIPS][LEDS_PER_STRIP];
 
-static uint8_t int current_hue = 10;
+static uint8_t current_hue = 100;
+static EFFECT_T active_effect = PULSE;
 
 // Initialize FASTLED controller
 void led_setup(void);
+void led_update(void);
 void pulse_effect(void);
 void led_off(void);
 #endif

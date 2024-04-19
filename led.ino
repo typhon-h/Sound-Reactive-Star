@@ -29,7 +29,22 @@ void led_setup()
     FastLED.show();
 }
 
-void pulse_effect() /// led update
+void led_update()
+{
+    switch (active_effect)
+    {
+    case PULSE: // Fallthrough
+    default:
+        pulse_effect();
+    }
+
+    if (IrReceiver.isIdle())
+    {
+        FastLED.show();
+    }
+}
+
+void pulse_effect()
 {
     int strips[4] = {0, 0, 0, 0};
     avg_freq_band_values(strips);
@@ -39,6 +54,7 @@ void pulse_effect() /// led update
     // max and min decide the range that the mic's range, based on the input it makes a
     // percentage / max and then outputs a percentage / 30 which decides how many lights are on
     int boundaries[4][2] = {
+        // TODO: Find a better way of controlling this universally
         {19, 90},
         {10, 90},
         {5, 90},
@@ -64,11 +80,6 @@ void pulse_effect() /// led update
         {
             leds[k][i] = CRGB::Black;
         }
-    }
-
-    if (IrReceiver.isIdle())
-    {
-        FastLED.show();
     }
 }
 

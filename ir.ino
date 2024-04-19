@@ -88,8 +88,6 @@ void ir_run_command(int command)
 
   case 0x07:
     current_hue = 10;
-    step_hue = true;
-    shuffle = false;
     break;
 
   case 0x08:
@@ -105,7 +103,6 @@ void ir_run_command(int command)
     break;
 
   case 0x0B:
-    shuffle = true;
     break;
 
   case 0x0C:
