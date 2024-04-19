@@ -23,6 +23,7 @@
 
 void microphone_setup(void);
 void microphone_sample(void);
+void avg_freq_band_values(int *bands);
 
 #define MICROPHONE_PIN A0
 

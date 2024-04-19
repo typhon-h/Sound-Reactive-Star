@@ -49,3 +49,28 @@ void microphone_sample()
     // }
     // Serial.println(fht_log_out[(FHT_N / 2) - 1]);
 }
+
+void avg_freq_band_values(int *bands)
+{
+    for (int i = NOISE_INDEX + 1; i <= LOW_INDEX; i++)
+    {
+        bands[0] += fht_log_out[i] / (LOW_INDEX - NOISE_INDEX);
+    }
+
+    for (int i = LOW_INDEX + 1; i <= LOW_MID_INDEX; i++)
+    {
+        bands[1] += fht_log_out[i] / (LOW_MID_INDEX - LOW_INDEX);
+    }
+
+    for (int i = LOW_MID_INDEX + 1; i <= HIGH_MID_INDEX; i++)
+    {
+        bands[2] += fht_log_out[i] / (HIGH_MID_INDEX - LOW_MID_INDEX);
+    }
+
+    for (int i = HIGH_MID_INDEX + 1; i <= HIGH_INDEX; i++)
+    {
+        bands[3] += fht_log_out[i] / (HIGH_INDEX - HIGH_MID_INDEX);
+    }
+
+    return bands;
+}
