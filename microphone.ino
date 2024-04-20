@@ -74,3 +74,8 @@ void avg_freq_band_values(int *bands)
 
     return bands;
 }
+
+int get_level_boundary(int lower, int upper)
+{
+    return upper + (lower - upper) * mic_sensitivity;
+}
