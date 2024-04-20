@@ -23,7 +23,7 @@ void led_setup()
     FastLED.setCorrection(TypicalLEDStrip);
 
     // limit my draw to 2.7A at 5v of power draw
-    FastLED.setMaxPowerInVoltsAndMilliamps(5, 2500);
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 2700);
 
     FastLED.clear();
     FastLED.show();
