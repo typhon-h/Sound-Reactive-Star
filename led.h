@@ -15,6 +15,7 @@ typedef enum
 {
     PULSE,
     INVERSE_PULSE,
+    COLOR_PULSE,
     BEAT,
     SPIRAL,
     NUM_EFFECTS
@@ -39,11 +40,10 @@ typedef enum
 CRGB leds[NUM_STRIPS][LEDS_PER_STRIP];
 
 static uint8_t current_hue = 100;
-static EFFECT_T active_effect = PULSE;
+static EFFECT_T active_effect = COLOR_PULSE;
 
 // Initialize FASTLED controller
 void led_setup(void);
 void led_update(void);
-void pulse_effect(bool is_inverse);
 void led_off(void);
 #endif

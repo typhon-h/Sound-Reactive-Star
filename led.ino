@@ -42,6 +42,9 @@ void led_update()
     case INVERSE_PULSE:
         pulse_effect(true);
         break;
+    case COLOR_PULSE:
+        color_effect();
+        break;
     case PULSE: // Fallthrough
     default:
         pulse_effect(false);
@@ -165,6 +168,40 @@ void pulse_effect(bool is_inverse)
         for (int i = val; i < LEDS_PER_STRIP; i++) // base state off
         {
             leds[k][i] = fills[(int)!is_inverse];
+        }
+    }
+}
+
+void color_effect()
+{
+    int strips[4] = {0, 0, 0, 0};
+    avg_freq_band_values(strips);
+
+    // -------------------------------
+    // Turn on LEDS
+    // max and min decide the range that the mic's range, based on the input it makes a
+    // percentage / max and then outputs a percentage / 30 which decides how many lights are on
+    int boundaries[4][2] = {
+        {get_level_boundary(LOW_MIN_LOWER, LOW_MAX_LOWER), get_level_boundary(LOW_MIN_UPPER, LOW_MAX_UPPER)},
+        {get_level_boundary(LOWMID_MIN_LOWER, LOWMID_MAX_LOWER), get_level_boundary(LOWMID_MIN_UPPER, LOWMID_MAX_UPPER)},
+        {get_level_boundary(HIGHMID_MIN_LOWER, HIGHMID_MAX_LOWER), get_level_boundary(HIGHMID_MIN_UPPER, HIGHMID_MAX_UPPER)},
+        {get_level_boundary(HIGH_MIN_LOWER, HIGH_MAX_LOWER), get_level_boundary(HIGH_MIN_UPPER, HIGH_MAX_UPPER)},
+
+    };
+
+    for (int k = 0; k < NUM_STRIPS; k++)
+    {
+        if (strips[k] > boundaries[k][1])
+            strips[k] = boundaries[k][1];
+
+        if (strips[k] < boundaries[k][0])
+            strips[k] = boundaries[k][0];
+
+        byte hue = map(strips[k], boundaries[k][0], boundaries[k][1], 0, 128);
+
+        for (int i = 0; i < LEDS_PER_STRIP; i++)
+        {
+            leds[k][i] = CHSV((current_hue + hue) % 255, DEFAULT_SATURATION, DEFAULT_INTENSITY);
         }
     }
 }
