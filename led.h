@@ -14,6 +14,9 @@
 typedef enum
 {
     PULSE,
+    INVERSE_PULSE,
+    BEAT,
+    SPIRAL,
     NUM_EFFECTS
 } EFFECT_T;
 
@@ -41,6 +44,6 @@ static EFFECT_T active_effect = PULSE;
 // Initialize FASTLED controller
 void led_setup(void);
 void led_update(void);
-void pulse_effect(void);
+void pulse_effect(bool is_inverse);
 void led_off(void);
 #endif
