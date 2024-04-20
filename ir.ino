@@ -5,6 +5,7 @@
 */
 #include "ir.h"
 #include "led.h"
+#include "microphone.h"
 #include "tasks.h"
 
 #define IR_DEBOUNCE_MS 600
@@ -51,12 +52,37 @@ void ir_poll()
  */
 void ir_run_command(int command)
 {
+  if (!power_on && command == 0x03)
+  {
+    power_on = true;
+    led_task.enable();
+    microphone_task.enable();
+    Serial.println("Power on");
+    return;
+  }
+
   switch (command)
   {
   case 0x00:
+    if (mic_sensitivity > DELTA_SENSITIVITY)
+    {
+      mic_sensitivity -= DELTA_SENSITIVITY;
+    }
+    else
+    {
+      mic_sensitivity = 0;
+    }
     break;
 
   case 0x01:
+    if (mic_sensitivity < 1 - DELTA_SENSITIVITY)
+    {
+      mic_sensitivity += DELTA_SENSITIVITY;
+    }
+    else
+    {
+      mic_sensitivity = 1;
+    }
     break;
 
   case 0x02: // Power off
@@ -68,11 +94,7 @@ void ir_run_command(int command)
     break;
 
   case 0x03: // Power on
-    power_on = true;
-    led_task.enable();
-    microphone_task.enable();
-    Serial.println("Power on");
-    break;
+    break;   // Do nothing when power on
 
   case 0x04:
     current_hue = 0;
@@ -87,7 +109,7 @@ void ir_run_command(int command)
     break;
 
   case 0x07:
-    current_hue = 10;
+    active_effect = PULSE;
     break;
 
   case 0x08:
@@ -103,6 +125,7 @@ void ir_run_command(int command)
     break;
 
   case 0x0B:
+    active_effect = INVERSE_PULSE;
     break;
 
   case 0x0C:
@@ -118,6 +141,7 @@ void ir_run_command(int command)
     break;
 
   case 0x0F:
+    active_effect = COLOR_PULSE;
     break;
 
   case 0x10:
@@ -133,6 +157,7 @@ void ir_run_command(int command)
     break;
 
   case 0x13:
+    active_effect = BEAT;
     break;
 
   case 0x14:
@@ -147,7 +172,8 @@ void ir_run_command(int command)
     current_hue = 238;
     break;
 
-  case 0x17: // unassigned
+  case 0x17:
+    active_effect = SPIRAL;
     break;
 
   default:
