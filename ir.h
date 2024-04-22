@@ -5,6 +5,7 @@
  */
 #ifndef IR_H
 #define IR_H
+#define DECODE_NEC
 #include <IRremote.hpp>
 
 #define IR_RECEIVE_PIN A1 // TODO: set pin

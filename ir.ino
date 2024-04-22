@@ -8,8 +8,6 @@
 #include "microphone.h"
 #include "tasks.h"
 
-#define IR_DEBOUNCE_MS 600
-
 /**
  * @brief Initializes IR receiver
  *
@@ -23,25 +21,17 @@ void ir_setup()
  * @brief Polls IR receiver for incoming command
  *
  */
-void ir_poll()
+void ir_poll() //TODO: Remove LED sim to increase reliability in production
 {
-  static long lastInput = 0;
-  long currentInput = millis();
-
-  if ((currentInput - lastInput) < IR_DEBOUNCE_MS)
-  {
-    return;
-  }
-
   if (IrReceiver.decode())
   {
+    IrReceiver.resume();
+
     if (IrReceiver.decodedIRData.protocol == NEC) // NEC
     {
       Serial.println(IrReceiver.decodedIRData.command);
       ir_run_command(IrReceiver.decodedIRData.command);
-      lastInput = currentInput;
     }
-    IrReceiver.resume();
   }
 }
 
@@ -56,7 +46,7 @@ void ir_run_command(int command)
   {
     power_on = true;
     led_task.enable();
-    microphone_task.enable();
+    microphone_sample_task.enable();
     Serial.println("Power on");
     return;
   }
@@ -64,17 +54,6 @@ void ir_run_command(int command)
   switch (command)
   {
   case 0x00:
-    if (mic_sensitivity > DELTA_SENSITIVITY)
-    {
-      mic_sensitivity -= DELTA_SENSITIVITY;
-    }
-    else
-    {
-      mic_sensitivity = 0;
-    }
-    break;
-
-  case 0x01:
     if (mic_sensitivity < 1 - DELTA_SENSITIVITY)
     {
       mic_sensitivity += DELTA_SENSITIVITY;
@@ -85,10 +64,21 @@ void ir_run_command(int command)
     }
     break;
 
+  case 0x01:
+    if (mic_sensitivity > DELTA_SENSITIVITY)
+    {
+      mic_sensitivity -= DELTA_SENSITIVITY;
+    }
+    else
+    {
+      mic_sensitivity = 0;
+    }
+    break;
+
   case 0x02: // Power off
     power_on = false;
     led_task.disable();
-    microphone_task.disable();
+    microphone_sample_task.disable();
     led_off();
     Serial.println("Power off");
     break;

@@ -13,7 +13,7 @@ void microphone_setup(void)
 {
 }
 
-int readAudioWithFilter()
+int readAudioWithFilter() // Apply a low pass filter to reduce aliasing
 {
     static float lastValue = 0;                                           // Previous filtered value
     float alpha = LOW_PASS_FREQ / (LOW_PASS_FREQ + SAMPLE_RATE * 2 * PI); // Filter coefficient
@@ -35,12 +35,12 @@ void microphone_sample()
         int k = readAudioWithFilter();
         fht_input[i] = k; // fill out array
     }
-
     fht_window();  // window the data for better frequency response
     fht_reorder(); // reorder the data before doing the fht
     fht_run();     // process the data in the fht
     fht_mag_log(); // take the output of the fht
     sei();
+
     // For Microphone level visualizer
     // for (int i = 0; i < (FHT_N / 2) - 1; i++)
     // {
