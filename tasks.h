@@ -12,6 +12,6 @@
 
 extern Task ir_task;
 extern Task led_task;
-extern Task microphone_task;
+extern Task microphone_sample_task;
 
 #endif

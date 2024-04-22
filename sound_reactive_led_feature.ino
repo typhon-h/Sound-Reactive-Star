@@ -22,21 +22,21 @@ void setup()
   led_setup();
 
   // // Set up the IR
-  // ir_setup();
+  ir_setup();
 
   // Set up the microphone
   microphone_setup();
 
   // Set up the scheduler
   schedule.init();
-  //  schedule.addTask(ir_task);
+  schedule.addTask(ir_task);
   schedule.addTask(led_task);
-  schedule.addTask(microphone_task);
+  schedule.addTask(microphone_sample_task);
 
   led_task.enable();
-  microphone_task.enable();
+  microphone_sample_task.enable();
 
-  //  ir_task.enable();
+  ir_task.enable();
 }
 
 void loop()

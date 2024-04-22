@@ -14,10 +14,10 @@
 // Initialise tasks
 #define FREQ_TO_PERIOD(FREQUENCY) (1000 * TASK_MILLISECOND) / FREQUENCY // Macro that turns
 // frequency to period so all values below are in times / sec
-#define IR_TASK_FREQUENCY 50
-#define LED_TASK_FREQUENCY 20
-#define MICROPHONE_TASK_FREQUENCY 30
+#define IR_TASK_FREQUENCY 100
+#define LED_TASK_FREQUENCY 16
+#define MICROPHONE_SAMPLE_TASK_FREQUENCY 8
 
 Task ir_task(FREQ_TO_PERIOD(IR_TASK_FREQUENCY), TASK_FOREVER, &ir_poll);
 Task led_task(FREQ_TO_PERIOD(LED_TASK_FREQUENCY), TASK_FOREVER, &led_update);
-Task microphone_task(FREQ_TO_PERIOD(MICROPHONE_TASK_FREQUENCY), TASK_FOREVER, &microphone_sample);
+Task microphone_sample_task(FREQ_TO_PERIOD(MICROPHONE_SAMPLE_TASK_FREQUENCY), TASK_FOREVER, &microphone_sample);
