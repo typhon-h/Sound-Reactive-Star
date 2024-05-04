@@ -17,7 +17,8 @@ Scheduler schedule;
 void setup()
 {
   delay(3000);
-  Serial.begin(115200); // Initialize serial communication
+  // Serial.begin(115200); // Initialize serial communication
+
   // // Set up the LED
   led_setup();
 
