@@ -21,7 +21,7 @@ void ir_setup()
  * @brief Polls IR receiver for incoming command
  *
  */
-void ir_poll() // TODO: Remove LED sim to increase reliability in production
+void ir_poll()
 {
   if (IrReceiver.decode())
   {
@@ -29,7 +29,6 @@ void ir_poll() // TODO: Remove LED sim to increase reliability in production
 
     if (IrReceiver.decodedIRData.protocol == NEC) // NEC
     {
-      // Serial.println(IrReceiver.decodedIRData.command);
       ir_run_command(IrReceiver.decodedIRData.command);
     }
   }
@@ -47,7 +46,6 @@ void ir_run_command(int command)
     power_on = true;
     led_task.enable();
     microphone_sample_task.enable();
-    // Serial.println("Power on");
     return;
   }
 
@@ -80,7 +78,6 @@ void ir_run_command(int command)
     led_task.disable();
     microphone_sample_task.disable();
     led_off();
-    // Serial.println("Power off");
     break;
 
   case 0x03: // Power on

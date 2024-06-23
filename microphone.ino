@@ -40,14 +40,6 @@ void microphone_sample()
     fht_run();     // process the data in the fht
     fht_mag_log(); // take the output of the fht
     sei();
-
-    // For Microphone level visualizer
-    // for (int i = 0; i < (FHT_N / 2) - 1; i++)
-    // {
-    //     Serial.print(fht_log_out[i]);
-    //     Serial.print(",");
-    // }
-    // Serial.println(fht_log_out[(FHT_N / 2) - 1]);
 }
 
 void avg_freq_band_values(int *bands)
