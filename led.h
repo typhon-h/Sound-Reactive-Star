@@ -40,7 +40,7 @@ typedef enum
 CRGB leds[NUM_STRIPS][LEDS_PER_STRIP];
 
 static uint8_t current_hue = 0;
-static EFFECT_T active_effect = COLOR_PULSE;
+static EFFECT_T active_effect = PULSE;
 
 // Initialize FASTLED controller
 void led_setup(void);
