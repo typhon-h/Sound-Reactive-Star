@@ -23,8 +23,8 @@ typedef enum
 
 #define LEDS_PER_STRIP 30
 #define NUM_STRIPS 4
-#define VERT_STRIP_PIN 9
-#define RSLANT_STRIP_PIN 10
+#define VERT_STRIP_PIN 10
+#define RSLANT_STRIP_PIN 9
 #define HORIZ_STRIP_PIN 11
 #define LSLANT_STRIP_PIN A2
 
