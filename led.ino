@@ -105,9 +105,9 @@ void beat_effect()
     int strips[4] = {0, 0, 0, 0};
     avg_freq_band_values(strips);
 
-    int upper = get_level_boundary(LOW_MIN_UPPER, LOW_MAX_UPPER);
-    int lower = get_level_boundary(LOW_MIN_LOWER, LOW_MAX_LOWER);
-    float scalar = 0.6f; // Position of the threshold in the range as percentage
+    int upper = get_level_boundary(LOWMID_MIN_UPPER, LOWMID_MAX_UPPER);
+    int lower = get_level_boundary(LOWMID_MIN_LOWER, LOWMID_MAX_LOWER);
+    float scalar = 0.5f; // Position of the threshold in the range as percentage
     int threshold = lower + (upper - lower) * scalar;
 
     for (int i = RSLANT_STRIP; i < NUM_STRIPS; i++)
@@ -154,6 +154,10 @@ void pulse_effect(bool is_inverse)
             strips[k] = boundaries[k][0];
 
         byte val = map(strips[k], boundaries[k][0], boundaries[k][1], 0, LEDS_PER_STRIP);
+
+        if(is_inverse) {
+          val = max(LEDS_PER_STRIP - val, 0);
+        }
 
         CHSV fills[2] = {
             CHSV(current_hue % 255, DEFAULT_SATURATION, DEFAULT_INTENSITY), // Solid color
