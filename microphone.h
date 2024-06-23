@@ -43,8 +43,8 @@
 #define HIGH_MAX_LOWER 20
 #define HIGH_MAX_UPPER 70
 
-#define DELTA_SENSITIVITY 0.1f // TODO: Maybe make this 0.05 for precision
-float mic_sensitivity = 0.8f;  // Band sensitivity multiplier between 0-1
+#define DELTA_SENSITIVITY 0.05f;
+float mic_sensitivity = 0.6f; // Band sensitivity multiplier between 0-1
 
 int get_level_boundary(int lower, int upper);
 
